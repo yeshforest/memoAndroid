@@ -10,10 +10,11 @@ interface MemoDao {
 
     @Query("SELECT * FROM memo_table ORDER BY writeDate DESC")
     fun getAllMemos():
-            LiveData<List<Memo>>
+            List<Memo>
 
     @Query("SELECT * FROM memo_table WHERE title= :searchTitle")
     suspend fun getMemoByTitle(searchTitle:String):List<Memo>
+
 
     @Delete
     suspend fun deleteMemo(memo:Memo)
