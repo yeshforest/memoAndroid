@@ -19,6 +19,7 @@ import com.example.todolist.databinding.ItemListBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -34,17 +35,17 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
         memoItems.addAll(mI)
     }
 
-    class ViewHolder(val binding: ItemListBinding,private val customAdapter:CustomAdapter) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemListBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
 
 
             binding.item.setOnClickListener {
                 var curPos: Int = adapterPosition
-                var memoItem: Memo = customAdapter.memoItems.get(curPos)
+                var memoItem: Memo = memoItems.get(curPos)
 
                 var strChoiceItems = arrayOf("수정하기", "삭제하기")
-                val builder: AlertDialog.Builder = AlertDialog.Builder(customAdapter.context)
+                val builder: AlertDialog.Builder = AlertDialog.Builder(context)
                 builder.setTitle("원하는 작업을 선택해주세요")
                 builder.setItems(strChoiceItems, DialogInterface.OnClickListener { dialogInterface, pos ->
 
@@ -53,7 +54,7 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
                         // 수정하기
 
                         //팝업창 띄우기
-                        val dialog = Dialog(customAdapter.context,android.R.style.Theme_Material_Light_Dialog)
+                        val dialog = Dialog(context,android.R.style.Theme_Material_Light_Dialog)
                         dialog.setContentView(R.layout.dialog_edit)
 
                         dialog.setCancelable(false)
@@ -78,37 +79,37 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
                             CoroutineScope(Dispatchers.IO).launch {
 
-                                customAdapter.myDao.updateMemo(memoItem)
-                                launch(Dispatchers.Main) {
-                                    Log.d("memoitem",memoItem.content)
-                                    customAdapter.notifyItemChanged(curPos,memoItem) }
-
+                                myDao.updateMemo(memoItem)
+                                withContext(Dispatchers.Main) {
+                                    Log.d("memoitem", memoItem.content)
+                                    notifyItemChanged(curPos, memoItem)
+                                }
                             }
-
 
                             dialog.dismiss()
                          //   dialogParentView.removeView(dialogbinding.root)
-                            Toast.makeText(customAdapter.context,"수정 완료!",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"수정 완료!",Toast.LENGTH_SHORT).show()
                         }
                         dialog.show()
                     } else if (pos == 1) {
                         //delete
                         CoroutineScope(Dispatchers.IO).launch {
-                            customAdapter.myDao.deleteMemo(memoItem)
+                            myDao.deleteMemo(memoItem)
 
-                            launch(Dispatchers.Main) {
+                            withContext(Dispatchers.Main) {
                                 //delete UI
-                                customAdapter.memoItems.removeAt(curPos)
+                               memoItems.removeAt(curPos)
                                 // customAdapter.notifyItemChanged(curPos)
-                                customAdapter.notifyItemRemoved(curPos)
-
-                        }
-
+                             notifyItemRemoved(curPos)
 
 
                         }
 
-                        Toast.makeText(customAdapter.context,"삭제완료!",Toast.LENGTH_SHORT).show()
+
+
+                        }
+
+                        Toast.makeText(context,"삭제완료!",Toast.LENGTH_SHORT).show()
                     }
                 })
                 builder.show()
@@ -122,13 +123,15 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
         notifyItemInserted(0)//반영
 
     }
+
+
   //한 화면에 그려지는 아이템 개수만큼 레이아웃 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val binding = ItemListBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
         val dialogbinding=DialogEditBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        return ViewHolder(binding, CustomAdapter(memoItems,context))
+        return ViewHolder(binding)
     }
 
     // 생성된 아이템 레이아읏에 값 입력 후 목록에 출력
