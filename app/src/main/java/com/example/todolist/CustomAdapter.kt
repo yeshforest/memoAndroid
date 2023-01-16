@@ -4,14 +4,10 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.text.Editable
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.DialogEditBinding
@@ -35,7 +31,7 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
         memoItems.addAll(mI)
     }
 
-    inner class ViewHolder(val binding: ItemListBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemListBinding, val dialogbinding:DialogEditBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
 
@@ -47,7 +43,7 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
                 var strChoiceItems = arrayOf("수정하기", "삭제하기")
                 val builder: AlertDialog.Builder = AlertDialog.Builder(context)
                 builder.setTitle("원하는 작업을 선택해주세요")
-                builder.setItems(strChoiceItems, DialogInterface.OnClickListener { dialogInterface, pos ->
+                builder.setItems(strChoiceItems, DialogInterface.OnClickListener { _, pos ->
 
 
                     if (pos == 0) {
@@ -55,15 +51,16 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
                         //팝업창 띄우기
                         val dialog = Dialog(context,android.R.style.Theme_Material_Light_Dialog)
-                        dialog.setContentView(R.layout.dialog_edit)
+                        dialog.setContentView(dialogbinding.root)
 
                         dialog.setCancelable(false)
 
-                        val et_title: EditText =dialog.findViewById(R.id.et_title)
-                        val et_content: EditText =dialog.findViewById(R.id.et_content)
-                        val btn_save: Button =dialog.findViewById(R.id.btn_save)
+                        val et_title: EditText =dialogbinding.etTitle
+                        val et_content: EditText =dialogbinding.etContent
+                        val btn_save: Button =dialogbinding.btnSave
                         et_title.setText(memoItem.title)
                         et_content.setText(memoItem.content)
+
                         btn_save.setOnClickListener{
 
                             //Update table
@@ -81,13 +78,11 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
                                 myDao.updateMemo(memoItem)
                                 withContext(Dispatchers.Main) {
-                                    Log.d("memoitem", memoItem.content)
                                     notifyItemChanged(curPos, memoItem)
                                 }
                             }
 
                             dialog.dismiss()
-                         //   dialogParentView.removeView(dialogbinding.root)
                             Toast.makeText(context,"수정 완료!",Toast.LENGTH_SHORT).show()
                         }
                         dialog.show()
@@ -99,7 +94,6 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
                             withContext(Dispatchers.Main) {
                                 //delete UI
                                memoItems.removeAt(curPos)
-                                // customAdapter.notifyItemChanged(curPos)
                              notifyItemRemoved(curPos)
 
 
@@ -131,7 +125,7 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
         val binding = ItemListBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
         val dialogbinding=DialogEditBinding.inflate(LayoutInflater.from(parent.context),parent,false)
-        return ViewHolder(binding)
+        return ViewHolder(binding,dialogbinding)
     }
 
     // 생성된 아이템 레이아읏에 값 입력 후 목록에 출력
@@ -143,10 +137,6 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
     }
 
 
-    //override fun getItemCount() = memoItems.size
-    override fun getItemCount(): Int {//삭제한 뒤엔 size가 안뜬다.
-        Log.d("size?????",memoItems.size.toString())
-        return memoItems.size
+    override fun getItemCount() = memoItems.size
 
-    }
 }
