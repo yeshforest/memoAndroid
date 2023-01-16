@@ -55,17 +55,18 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
                         dialog.setCancelable(false)
 
-                        val et_title: EditText =dialogbinding.etTitle
-                        val et_content: EditText =dialogbinding.etContent
-                        val btn_save: Button =dialogbinding.btnSave
-                        et_title.setText(memoItem.title)
-                        et_content.setText(memoItem.content)
 
-                        btn_save.setOnClickListener{
+                        dialogbinding.etTitle.setText(memoItem.title)
+                        dialogbinding.etContent.setText(memoItem.content)
+
+                        dialogbinding.btnClose.setOnClickListener {
+                            dialog.dismiss()
+                        }
+                        dialogbinding.btnSave.setOnClickListener{
 
                             //Update table
-                            val title:String=et_title.text.toString()
-                            val content:String=et_content.text.toString()
+                            val title:String=dialogbinding.etTitle.text.toString()
+                            val content:String=dialogbinding.etContent.text.toString()
                             val currentTime:String=
                                 SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
                             val beforeTime=memoItem.writeDate

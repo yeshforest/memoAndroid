@@ -55,7 +55,9 @@ class MainActivity : AppCompatActivity() {
             dialog.setCancelable(false)
             var dialogParentView: ViewGroup =dialogbinding.root.parent as ViewGroup
 
-
+            dialogbinding.btnClose.setOnClickListener {
+                dialog.dismiss()
+            }
             dialogbinding.btnSave.setOnClickListener{
 
                 var et_title=dialogbinding.etTitle.text.toString()
