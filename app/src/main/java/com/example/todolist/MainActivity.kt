@@ -1,22 +1,17 @@
 package com.example.todolist
 
-import android.app.Dialog
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
-import androidx.recyclerview.widget.RecyclerView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.todolist.databinding.ActivityMainBinding
 import com.example.todolist.databinding.DialogEditBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -24,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var memoItems:ArrayList<Memo>
     private lateinit var myDao:MemoDao
     private var madapter:CustomAdapter?=null
-
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
 
     private fun loadRecentDB() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -39,33 +34,13 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-    private fun setInit(){
-        var dialogbinding= DialogEditBinding.inflate(layoutInflater)
-        myDao=MyDatabase.getDatabase(this).getMemoDao()
-        memoItems= ArrayList<Memo>()
-
-        loadRecentDB()
-
-        binding.btnWrite.setOnClickListener {
-
-
-            //팝업창 띄우기
-            var dialog: Dialog = Dialog(this,android.R.style.Theme_Material_Light_Dialog)
-            dialog.setContentView(dialogbinding.root)
-            dialog.setCancelable(false)
-            var dialogParentView: ViewGroup =dialogbinding.root.parent as ViewGroup
-
-            dialogbinding.btnClose.setOnClickListener {
-                dialog.dismiss()
-            }
-            dialogbinding.btnSave.setOnClickListener{
-
-                var et_title=dialogbinding.etTitle.text.toString()
-                var et_content=dialogbinding.etContent.text.toString()
-                var currentTime=SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
-
-
-
+    //registerForActivityResult 등록
+    private fun setResultWrite(){
+        resultLauncher=registerForActivityResult(ActivityResultContracts.StartActivityForResult()){result ->
+            if(result.resultCode== Activity.RESULT_OK){
+                val currentTime=result.data?.getStringExtra("currentTime") ?:"시간 저장 실패"
+                val et_title=result.data?.getStringExtra("et_title")?:"제목 저장 실패"
+                val et_content=result.data?.getStringExtra("et_content")?:"내용 저장 실패"
 
                 //Insert Database
                 CoroutineScope(Dispatchers.IO).launch {
@@ -77,14 +52,23 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 binding.rvTodo.smoothScrollToPosition(0)
-                dialogbinding.etTitle.setText("")
-                dialogbinding.etContent.setText("")
-                dialog.dismiss()
-                dialogParentView.removeView(dialogbinding.root)
-                Toast.makeText(applicationContext,"추가 완료!",Toast.LENGTH_SHORT).show()
-
+                Toast.makeText(applicationContext,"추가 완료!", Toast.LENGTH_SHORT).show()
             }
-        dialog.show()
+
+        }
+    }
+    private fun setInit(){
+        myDao=MyDatabase.getDatabase(this).getMemoDao()
+        memoItems= ArrayList<Memo>()
+
+        loadRecentDB()
+        setResultWrite()
+
+        binding.btnWrite.setOnClickListener {
+
+            var intent= Intent(this,SaveItem::class.java)
+            resultLauncher.launch(intent)
+
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {

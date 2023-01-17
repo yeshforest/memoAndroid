@@ -35,7 +35,7 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
         init {
 
-
+/*
             binding.item.setOnClickListener {
                 var curPos: Int = adapterPosition
                 var memoItem: Memo = memoItems.get(curPos)
@@ -108,7 +108,7 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
                     }
                 })
                 builder.show()
-            }
+            }*/
 
         }
     }
