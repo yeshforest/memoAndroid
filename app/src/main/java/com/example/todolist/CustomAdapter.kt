@@ -35,80 +35,41 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
         init {
 
-/*
+
             binding.item.setOnClickListener {
                 var curPos: Int = adapterPosition
                 var memoItem: Memo = memoItems.get(curPos)
 
-                var strChoiceItems = arrayOf("수정하기", "삭제하기")
+                var strChoiceItems = arrayOf("삭제하기")
                 val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-                builder.setTitle("원하는 작업을 선택해주세요")
+                builder.setTitle("삭제하시겠습니까?")
                 builder.setItems(strChoiceItems, DialogInterface.OnClickListener { _, pos ->
 
 
                     if (pos == 0) {
-                        // 수정하기
-
-                        //팝업창 띄우기
-                        val dialog = Dialog(context,android.R.style.Theme_Material_Light_Dialog)
-                        dialog.setContentView(dialogbinding.root)
-
-                        dialog.setCancelable(false)
-
-
-                        dialogbinding.etTitle.setText(memoItem.title)
-                        dialogbinding.etContent.setText(memoItem.content)
-
-                        dialogbinding.btnClose.setOnClickListener {
-                            dialog.dismiss()
-                        }
-                        dialogbinding.btnSave.setOnClickListener{
-
-                            //Update table
-                            val title:String=dialogbinding.etTitle.text.toString()
-                            val content:String=dialogbinding.etContent.text.toString()
-                            val currentTime:String=
-                                SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
-                            val beforeTime=memoItem.writeDate
-                            memoItem.title=title
-                            memoItem.content=content
-                            memoItem.writeDate=currentTime
-                            memoItem.beforeTime=beforeTime
-
-                            CoroutineScope(Dispatchers.IO).launch {
-
-                                myDao.updateMemo(memoItem)
-                                withContext(Dispatchers.Main) {
-                                    notifyItemChanged(curPos, memoItem)
-                                }
-                            }
-
-                            dialog.dismiss()
-                            Toast.makeText(context,"수정 완료!",Toast.LENGTH_SHORT).show()
-                        }
-                        dialog.show()
-                    } else if (pos == 1) {
                         //delete
                         CoroutineScope(Dispatchers.IO).launch {
                             myDao.deleteMemo(memoItem)
 
                             withContext(Dispatchers.Main) {
                                 //delete UI
-                               memoItems.removeAt(curPos)
-                             notifyItemRemoved(curPos)
+                                memoItems.removeAt(curPos)
+                                notifyItemRemoved(curPos)
 
 
-                        }
+                            }
 
 
 
                         }
 
                         Toast.makeText(context,"삭제완료!",Toast.LENGTH_SHORT).show()
+
+
                     }
                 })
                 builder.show()
-            }*/
+            }
 
         }
     }
