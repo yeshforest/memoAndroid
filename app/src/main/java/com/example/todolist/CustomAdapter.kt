@@ -1,13 +1,10 @@
 package com.example.todolist
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.DialogEditBinding
@@ -16,22 +13,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapter<CustomAdapter.ViewHolder>()
 {
-   private val myDao:MemoDao
-   private var memoItems= ArrayList<Memo>()
-   private var context: Context = c
+    val myDao:MemoDao
+    var memoItems= ArrayList<Memo>()
+    var context: Context = c
 
     init{
         myDao=MyDatabase.getDatabase(context).getMemoDao()
         memoItems.addAll(mI)
-    }
 
-    inner class ViewHolder(val binding: ItemListBinding, val dialogbinding:DialogEditBinding) : RecyclerView.ViewHolder(binding.root) {
+    }
+    inner class ViewHolder(val binding: ItemListBinding, val dialogbinding: DialogEditBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
 
@@ -63,7 +59,7 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
                         }
 
-                        Toast.makeText(context,"삭제완료!",Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context,"삭제완료!", Toast.LENGTH_SHORT).show()
 
 
                     }
@@ -73,6 +69,8 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
         }
     }
+
+
     //액티비티에서 호출되는 함수이며 현재 어댑터에 새로운 게시글 아이템을 전달받아 추가하는 목적이다.
     fun addItem(item:Memo){
         memoItems.add(0,item)//0번째에 add
