@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+    <TextView
         android:id="@+id/et_title"
         android:layout_width="0dp"
         android:layout_height="50dp"
@@ -26,8 +26,6 @@
         android:layout_marginTop="60dp"
         android:layout_marginEnd="24dp"
         android:ems="10"
-        android:hint="제목"
-        android:inputType="textPersonName"
         android:maxLines="1"
         android:singleLine="true"
         android:textColor="#000000"
@@ -36,16 +34,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+    <TextView
         android:id="@+id/et_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
-        android:ems="10"
-        android:hint="내용을 입력하세요"
-        android:inputType="textMultiLine"
         android:textAlignment="textStart"
         android:textColor="#000000"
         android:textColorHint="#C6C6C6"
@@ -53,5 +48,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_title" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

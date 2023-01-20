@@ -67,8 +67,8 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
             binding.item.setOnClickListener {
                 //item이 클릭되면 화면전환.
-                //전환 시 현재 memoItem을 넘겨줌
-                //삭제도 거기서 삭제
+                //전환 시 현재 memoItem을 넘겨줌,삭제
+
                 var curPos: Int = adapterPosition
                 var memoItem: Memo = memoItems.get(curPos)
 
