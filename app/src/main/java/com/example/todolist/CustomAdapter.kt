@@ -1,11 +1,15 @@
 package com.example.todolist
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.databinding.DialogEditBinding
 import com.example.todolist.databinding.ItemListBinding
@@ -21,7 +25,7 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
     val myDao:MemoDao
     var memoItems= ArrayList<Memo>()
     var context: Context = c
-
+    private lateinit var resultLauncher:ActivityResultLauncher<Intent>
     init{
         myDao=MyDatabase.getDatabase(context).getMemoDao()
         memoItems.addAll(mI)
@@ -29,21 +33,14 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
     }
     inner class ViewHolder(val binding: ItemListBinding, val dialogbinding: DialogEditBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        init {
 
-
-            binding.item.setOnClickListener {
-                var curPos: Int = adapterPosition
-                var memoItem: Memo = memoItems.get(curPos)
-
-                var strChoiceItems = arrayOf("삭제하기")
-                val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-                builder.setTitle("삭제하시겠습니까?")
-                builder.setItems(strChoiceItems, DialogInterface.OnClickListener { _, pos ->
-
-
-                    if (pos == 0) {
-                        //delete
+        private fun setResult(memoItem:Memo, curPos:Int){
+            val activity=context as MainActivity
+            resultLauncher=activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+                result->
+                if(result.resultCode== Activity.RESULT_OK){
+                    val isDelete=result.data?.getStringExtra("isDelete")?:false
+                    if(isDelete==true){
                         CoroutineScope(Dispatchers.IO).launch {
                             myDao.deleteMemo(memoItem)
 
@@ -60,11 +57,28 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
                         }
 
                         Toast.makeText(context,"삭제완료!", Toast.LENGTH_SHORT).show()
-
-
                     }
-                })
-                builder.show()
+                }
+            }
+        }
+
+        init {
+
+
+            binding.item.setOnClickListener {
+                //item이 클릭되면 화면전환.
+                //전환 시 현재 memoItem을 넘겨줌
+                //삭제도 거기서 삭제
+                var curPos: Int = adapterPosition
+                var memoItem: Memo = memoItems.get(curPos)
+
+
+                var intent=Intent(context,DetailedMemo::class.java)
+                intent.putExtra("memoItem",memoItem)
+                context.startActivity(intent)
+
+
+
             }
 
         }
@@ -98,5 +112,6 @@ class CustomAdapter(val mI:ArrayList<Memo>,val c:Context ) : RecyclerView.Adapte
 
 
     override fun getItemCount() = memoItems.size
+
 
 }

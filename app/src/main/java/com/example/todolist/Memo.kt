@@ -11,4 +11,4 @@ data class Memo (
     var title:String,
     var content:String,
     var beforeTime:String?
-        )
+        ):java.io.Serializable

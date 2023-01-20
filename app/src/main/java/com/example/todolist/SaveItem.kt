@@ -20,6 +20,10 @@ class SaveItem : AppCompatActivity() {
         binding=ActivityDetailedItemBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+
+
+
 //main(write버튼 클릭) -> saveItem 저장버튼 클릭(값 main으로 옮기기) -> main에서 recyclerview에 저장, db io
         binding.btnClose.setOnClickListener {
             //화면 닫는 로직(main화면으로)
@@ -44,6 +48,10 @@ class SaveItem : AppCompatActivity() {
 
 
         }
+
+
+
+
 
     }
 }
